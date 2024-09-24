@@ -4,7 +4,8 @@
 
 import random
 import math
-import simplegui
+import tkinter as tk
+from tkinter import messagebox
 
 
 #------------------------------------------
@@ -17,18 +18,15 @@ remaining_guesses = 0
 # helper function to start and restart the game
 
 def new_game():
-    print "----------------------------------------"
-    print "----------------------------------------"
-    
-    print "New game. Range is from 0 to", num_range
-    
-    global secret_number, remaining_guesses
+    global secret_number, remaining_guesses,num_range
+    print("----------------------------------------")
+    print("New game. Range is from 0 to", num_range)
     
     secret_number = random.randrange(0, num_range)
 
     remaining_guesses = int( math.ceil(math.log(num_range, 2)) )
     
-    print "Total Guesses:", remaining_guesses
+    print("Total Guesses:", remaining_guesses)
     
     
 #------------------------------------------
@@ -54,55 +52,70 @@ def reset():
     new_game()
     
     
-def input_guess(guess):
+def input_guess():
     
-    global remaining_guesses
+    global remaining_guesses, secret_number
     
-    guess = int(guess)
+    guess = int(guess_entry.get())
     
-    print "Guess was", guess
+    print("Guess was", guess)
     
     if guess < secret_number:
-        print "Higher!"
+        result_label.config(text="Higher!")
     elif guess > secret_number:
-        print "Lower!"
+        result_label.config(text="Lower!")
     else:
-        print "Correct!"
+        result_label.config(text="Correct!")
         new_game()
         return
     
     remaining_guesses -= 1
-    print ""
-    print "Number of remaining guesses is :", remaining_guesses
+    remaining_guesses_label.config(text=f"Remaining Guesses: {remaining_guesses}")
+
     
     if remaining_guesses == 0:
-        print "You ran out of guesses :(  The secret number was", secret_number
+        remaining_guesses_label.config(text=f"You ran out of guesses! : ( The number was {secret_number}. Starting a new game!)")
         new_game()
 
 #------------------------------------------
         
 # create frame
 
-frame = simplegui.create_frame("Guess the Number", 200, 200)
+window = tk.Tk()
+window.title("Guess the Number!")
+window.minsize(400,400)
 
 #------------------------------------------
+range100_button = tk.Button(window,text="Range is [0, 100]",command=range100)
+range100_button.pack(pady=5)
 
-# register event handlers for control elements and start frame
+range1000_button = tk.Button(window,text="Range is [0, 1000]",command=range1000)
+range1000_button.pack(pady=5)
 
-frame.add_button("Range is [0, 100)", range100, 200)
-frame.add_button("Range is [0, 1000)", range1000, 200)
-frame.add_input("Enter a guess", input_guess, 200)
+reset_button = tk.Button(window,text="New Game",command=reset)
+reset_button.pack(pady=5)
 
-frame.add_button("New Game", reset, 200)
+guess_entry_label = tk.Label(window,text="Enter your guess: ")
+guess_entry_label.pack(pady=5)
 
+guess_entry = tk.Entry(window)
+guess_entry.pack(pady=5)
+
+guess_button = tk.Button(window,text="Submit",command=input_guess)
+guess_button.pack(pady=5)
+
+# Label to display remaining guesses
+remaining_guesses_label = tk.Label(window, text="Remaining guesses: ")
+remaining_guesses_label.pack(pady=5)
+
+# Label to display results (Higher, Lower, Correct)
+result_label = tk.Label(window, text="")
+result_label.pack(pady=5)
 #------------------------------------------
-# call new_game 
+
 new_game()
 
-#------------------------------------------
-# starting the frame
-frame.start()
-#------------------------------------------
+window.mainloop()
 
 
 
