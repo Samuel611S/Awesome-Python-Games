@@ -1,31 +1,9 @@
-# Rock-paper-scissors-lizard-Spock template
-
-
-# The key idea of this program is to equate the strings
-# "rock", "paper", "scissors", "lizard", "Spock" to numbers
-# as follows:
-#
-# 0 - rock
-# 1 - Spock
-# 2 - paper
-# 3 - lizard
-# 4 - scissors
-
-#----------------------------------------------------------
-#----------------------------------------------------------
-#----------------------------------------------------------
-
 import random
-import simplegui
+import tkinter as tk
+from tkinter import messagebox
 
-
-# helper functions
-
+# Helper functions
 def name_to_number(name):
-    
-    # convert name to number using if/elif/else
-    # don't forget to return the result!
-
     if name == "rock":
         return 0
     elif name == "Spock":
@@ -37,102 +15,67 @@ def name_to_number(name):
     elif name == "scissors":
         return 4
     else:
-        print "Error: Not a valid name" 
+        return -1
 
-#----------------------------------------------------------
-#----------------------------------------------------------
-        
 def number_to_name(number):
-    
-    # convert number to a name using if/elif/else
-    # don't forget to return the result!
-
     if number == 0:
         return "rock"
     elif number == 1:
-        return "Spock" 
+        return "Spock"
     elif number == 2:
-        return "paper" 
+        return "paper"
     elif number == 3:
-        return "lizard" 
+        return "lizard"
     elif number == 4:
-        return "scissors" 
+        return "scissors"
     else:
-        print "Error: Not a valid number" 
-    
-    
-#----------------------------------------------------------    
-#----------------------------------------------------------    
+        return None
 
-
-def rpsls(player_choice): 
-    
-    print "------------"
-    print "------------"    
-    
-    print "Player chooses " + player_choice 
-    
+# Game logic
+def rpsls(player_choice):
     player_number = name_to_number(player_choice)
     
-	comp_number = random.randrange(0,5)
+    if player_number == -1:
+        messagebox.showerror("Error", "Invalid choice!")
+        return
     
+    comp_number = random.randrange(0, 5)
     comp_choice = number_to_name(comp_number)
     
-    print "Computer chooses " + comp_choice 
+    result_text = f"Player chooses {player_choice}\nComputer chooses {comp_choice}\n"
     
     diff = (comp_number - player_number) % 5
-
     if diff == 1 or diff == 2:
-        print "Computer Wins"
+        result_text += "Computer Wins!"
     elif diff == 3 or diff == 4:
-        print "Player Wins"
+        result_text += "Player Wins!"
     else:
-        print "Player and computer tie!"
- 
-
-#----------------------------------------------------------
-#----------------------------------------------------------
-#----------------------------------------------------------    
-#----------------------------------------------------------    
+        result_text += "It's a tie!"
     
-	
-# Event Handlers
+    result_label.config(text=result_text)
 
-def get_input(inp):
-	
-	if (inp == "rock" or inp == "paper" or inp == "lizard" or 
-			inp == "Spock" or inp == "scissors"):		
-		rpsls(inp)
-	else:
-		print "Error: Invalid Input"
-	
-	
+# Event handler for button click
+def on_button_click(choice):
+    rpsls(choice)
 
+# Create the main window
+window = tk.Tk()
+window.title("Rock-paper-scissors-lizard-Spock")
+window.minsize(600,400)
 
-# Creating a Frame
+# Instruction label
+instruction_label = tk.Label(window, text="Choose one:", font=('Helvetica', 14))
+instruction_label.pack(pady=10)
 
-frame = simplegui.create_frame("Rock-paper-scissors-lizard-Spock",200,200)
+# Buttons for each choice
+choices = ["rock", "Spock", "paper", "lizard", "scissors"]
+for choice in choices:
+    button = tk.Button(window, text=choice, width=20, font=('Helvetica', 12), command=lambda c=choice: on_button_click(c))
+    button.pack(pady=5)
 
-# Registering Handlers
+# Result label
+result_label = tk.Label(window, text="", font=('Helvetica', 14))
+result_label.pack(pady=20)
 
-frame.add_input("Enter your choice: ", get_input,200)	
-	
-	
-# Starting the Frame
-
-frame.start()	
-    
-
-	
-"""	
-# test your code - THESE CALLS MUST BE PRESENT IN YOUR SUBMITTED CODE
-rpsls("rock")
-rpsls("Spock")
-rpsls("paper")
-rpsls("lizard")
-rpsls("scissors")
-"""
-
-# always remember to check your completed program against the grading rubric
-
-
+# Run the window loop
+window.mainloop()
